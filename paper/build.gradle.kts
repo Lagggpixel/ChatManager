@@ -12,6 +12,8 @@ dependencies {
 
     implementation(libs.metrics)
 
+    implementation(libs.vital)
+
     compileOnly(libs.placeholder.api)
 
     compileOnly(libs.vault) {
@@ -26,6 +28,12 @@ tasks {
         defaultCharacterEncoding = Charsets.UTF_8.name()
 
         minecraftVersion("1.20.4")
+
+        downloadPlugins {
+            url("https://download.luckperms.net/1534/bukkit/loader/LuckPerms-Bukkit-5.4.121.jar")
+
+            hangar("PlaceholderAPI", "2.11.5")
+        }
     }
 
     assemble {

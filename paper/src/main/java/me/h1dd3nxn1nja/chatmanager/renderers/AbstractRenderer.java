@@ -2,9 +2,13 @@ package me.h1dd3nxn1nja.chatmanager.renderers;
 
 import io.papermc.paper.chat.ChatRenderer;
 import me.h1dd3nxn1nja.chatmanager.ChatManager;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -24,49 +28,55 @@ public abstract class AbstractRenderer implements ChatRenderer {
         return message;
     }
 
-    protected final @NotNull TagResolver getTags(Player player) {
-        Collection<TagResolver> tags = new HashSet<>();
+    protected final @NotNull TagResolver chat(Player player, Component component) {
+        Collection<TagResolver> resolver = new HashSet<>();
 
         if (player.hasPermission("chatmanager.color")) {
-            tags.add(StandardTags.color());
+            resolver.add(StandardTags.color());
         }
 
         if (player.hasPermission("chatmanager.gradient")) {
-            tags.add(StandardTags.gradient());
+            resolver.add(StandardTags.gradient());
         }
 
         if (player.hasPermission("chatmanager.rainbow")) {
-            tags.add(StandardTags.rainbow());
+            resolver.add(StandardTags.rainbow());
         }
 
         if (player.hasPermission("chatmanager.font")) {
-            tags.add(StandardTags.font());
+            resolver.add(StandardTags.font());
         }
 
         if (player.hasPermission("chatmanager.decoration.*")) {
-            tags.add(StandardTags.decorations());
+            resolver.add(StandardTags.decorations());
         } else {
             if (player.hasPermission("chatmanager.decoration.bold")) {
-                tags.add(StandardTags.decorations(TextDecoration.BOLD));
+                resolver.add(StandardTags.decorations(TextDecoration.BOLD));
             }
 
             if (player.hasPermission("chatmanager.decoration.italic")) {
-                tags.add(StandardTags.decorations(TextDecoration.ITALIC));
+                resolver.add(StandardTags.decorations(TextDecoration.ITALIC));
             }
 
             if (player.hasPermission("chatmanager.decoration.underlined")) {
-                tags.add(StandardTags.decorations(TextDecoration.UNDERLINED));
+                resolver.add(StandardTags.decorations(TextDecoration.UNDERLINED));
             }
 
             if (player.hasPermission("chatmanager.decoration.strikethrough")) {
-                tags.add(StandardTags.decorations(TextDecoration.STRIKETHROUGH));
+                resolver.add(StandardTags.decorations(TextDecoration.STRIKETHROUGH));
             }
 
             if (player.hasPermission("chatmanager.decoration.obfuscated")) {
-                tags.add(StandardTags.decorations(TextDecoration.OBFUSCATED));
+                resolver.add(StandardTags.decorations(TextDecoration.OBFUSCATED));
             }
         }
 
-        return TagResolver.builder().resolvers(tags).build();
+        MiniMessage builder = MiniMessage.builder()
+                .tags(TagResolver.builder().resolvers(resolver).build())
+                .build();
+
+        Component value = builder.deserialize(PlainTextComponentSerializer.plainText().serialize(component));
+
+        return TagResolver.resolver("message", (argumentQueue, context) -> Tag.selfClosingInserting(value));
     }
 }
