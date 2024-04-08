@@ -6,7 +6,7 @@ plugins {
 
 rootProject.group = "me.h1dd3nxn1nja.chatmanager"
 rootProject.description = "The kitchen sink of Chat Management!"
-rootProject.version = if (System.getenv("BUILD_NUMBER") != null) "3.11-${System.getenv("BUILD_NUMBER")}" else "3.11"
+rootProject.version = if (System.getenv("BUILD_NUMBER") != null) "4.0-${System.getenv("BUILD_NUMBER")}" else "4.0"
 
 subprojects {
     apply(plugin = "io.papermc.paperweight.userdev")

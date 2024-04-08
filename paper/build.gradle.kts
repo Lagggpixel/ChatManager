@@ -17,11 +17,6 @@ dependencies {
     compileOnly(libs.vault) {
         exclude("org.bukkit", "bukkit")
     }
-
-    compileOnly(libs.essentials) {
-        exclude("org.spigotmc", "spigot-api")
-        exclude("org.bstats", "bstats-bukkit")
-    }
 }
 
 tasks {
@@ -30,7 +25,7 @@ tasks {
 
         defaultCharacterEncoding = Charsets.UTF_8.name()
 
-        minecraftVersion(mcVersion)
+        minecraftVersion("1.20.4")
     }
 
     assemble {
@@ -38,7 +33,7 @@ tasks {
     }
 
     reobfJar {
-        outputJar = rootProject.layout.buildDirectory.file("$rootDir/jars/paper/${rootProject.name}-${rootProject.version}.jar")
+        outputJar = rootProject.layout.buildDirectory.file("$rootDir/jars/paper/${rootProject.name.lowercase()}-${rootProject.version}.jar")
     }
 
     shadowJar {
@@ -51,20 +46,16 @@ tasks {
     }
 
     processResources {
-        val properties = hashMapOf(
+        val props = mapOf(
             "name" to rootProject.name,
-            "version" to project.version,
+            "version" to rootProject.version,
             "group" to rootProject.group,
             "description" to rootProject.description,
-            "apiVersion" to providers.gradleProperty("apiVersion").get(),
-            "authors" to providers.gradleProperty("authors").get(),
-            "website" to providers.gradleProperty("website").get()
+            "apiVersion" to "1.20"
         )
 
-        inputs.properties(properties)
-
-        filesMatching("plugin.yml") {
-            expand(properties)
+        filesMatching("paper-plugin.yml") {
+            expand(props)
         }
     }
 }
